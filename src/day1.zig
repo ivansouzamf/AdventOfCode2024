@@ -1,6 +1,37 @@
 const std = @import("std");
 
 pub fn solve(allocator: std.mem.Allocator) !void {
+    const input_buffer = try loadInput(allocator);
+
+    const list_size = 1000;
+    var left_list = try std.ArrayList(i32).initCapacity(allocator, list_size);
+    var right_list = try std.ArrayList(i32).initCapacity(allocator, list_size);
+
+    try parseInput(input_buffer, &left_list, &right_list);
+
+    try solvePartOne(&left_list, &right_list);
+    try solvePartTwo(&left_list, &right_list);
+}
+
+fn solvePartOne(left_list: *std.ArrayList(i32), right_list: *std.ArrayList(i32)) !void {
+    std.mem.sort(i32, left_list.items, {}, std.sort.asc(i32));
+    std.mem.sort(i32, right_list.items, {}, std.sort.asc(i32));
+
+    var result: u32 = 0;
+    for (left_list.items, right_list.items) |left_num, right_num| {
+        const distance = @abs(left_num - right_num);
+        result += distance;
+    }
+
+    std.debug.print("Part 1 result: {d}\n", .{result});
+}
+
+fn solvePartTwo(left_list: *std.ArrayList(i32), right_list: *std.ArrayList(i32)) !void {
+    _ = left_list;
+    _ = right_list;
+}
+
+fn loadInput(allocator: std.mem.Allocator) ![]const u8 {
     const input = "inputs/day1.txt";
     var buff: [std.fs.max_path_bytes]u8 = undefined;
     const input_path = try std.fs.realpath(input, &buff);
@@ -13,10 +44,10 @@ pub fn solve(allocator: std.mem.Allocator) !void {
     const input_buffer = try allocator.alloc(u8, input_size);
     _ = try input_file.readAll(input_buffer);
 
-    const list_size = 1000;
-    var left_list = try std.ArrayList(i32).initCapacity(allocator, list_size);
-    var right_list = try std.ArrayList(i32).initCapacity(allocator, list_size);
+    return input_buffer;
+}
 
+fn parseInput(input_buffer: []const u8, left_list: *std.ArrayList(i32), right_list: *std.ArrayList(i32)) !void {
     var line_iterator = std.mem.splitAny(u8, input_buffer, "\n");
     while (line_iterator.next()) |line| {
         const max_num_size = 15;
@@ -48,7 +79,7 @@ pub fn solve(allocator: std.mem.Allocator) !void {
             var num_left_slice: []u8 = &num_left_str;
             num_left_slice.len = num_left_size;
             var num_right_slice: []u8 = &num_right_str;
-            num_right_slice.len = num_left_size;
+            num_right_slice.len = num_right_size;
 
             const num_left = try std.fmt.parseInt(i32, num_left_slice, 0);
             const num_right = try std.fmt.parseInt(i32, num_right_slice, 0);
@@ -56,15 +87,4 @@ pub fn solve(allocator: std.mem.Allocator) !void {
             try right_list.append(num_right);
         }
     }
-
-    std.mem.sort(i32, left_list.items, {}, std.sort.asc(i32));
-    std.mem.sort(i32, right_list.items, {}, std.sort.asc(i32));
-
-    var result: u32 = 0;
-    for (left_list.items, right_list.items) |left_num, right_num| {
-        const distance = @abs(left_num - right_num);
-        result += distance;
-    }
-
-    std.debug.print("Final result: {d}\n", .{result});
 }
