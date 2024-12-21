@@ -9,11 +9,11 @@ pub fn solve(allocator: std.mem.Allocator) !void {
 
     try parseInput(input_buffer, &left_list, &right_list);
 
-    try solvePartOne(&left_list, &right_list);
-    try solvePartTwo(&left_list, &right_list);
+    try solvePartOne(left_list, right_list);
+    try solvePartTwo(left_list, right_list);
 }
 
-fn solvePartOne(left_list: *std.ArrayList(i32), right_list: *std.ArrayList(i32)) !void {
+fn solvePartOne(left_list: std.ArrayList(i32), right_list: std.ArrayList(i32)) !void {
     std.mem.sort(i32, left_list.items, {}, std.sort.asc(i32));
     std.mem.sort(i32, right_list.items, {}, std.sort.asc(i32));
 
@@ -26,9 +26,21 @@ fn solvePartOne(left_list: *std.ArrayList(i32), right_list: *std.ArrayList(i32))
     std.debug.print("Part 1 result: {d}\n", .{result});
 }
 
-fn solvePartTwo(left_list: *std.ArrayList(i32), right_list: *std.ArrayList(i32)) !void {
-    _ = left_list;
-    _ = right_list;
+fn solvePartTwo(left_list: std.ArrayList(i32), right_list: std.ArrayList(i32)) !void {
+    var result: i32 = 0;
+    for (left_list.items) |num_left| {
+        var count: i32 = 0;
+        for (right_list.items) |num_right| {
+            if (num_left == num_right) {
+                count += 1;
+            }
+        }
+
+        const similarity = num_left * count;
+        result += similarity;
+    }
+
+    std.debug.print("Part 2 result: {d}\n", .{result});
 }
 
 fn loadInput(allocator: std.mem.Allocator) ![]const u8 {
