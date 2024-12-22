@@ -1,7 +1,8 @@
 const std = @import("std");
+const common = @import("common.zig");
 
 pub fn solve(allocator: std.mem.Allocator) !void {
-    const input_buffer = try loadInput(allocator);
+    const input_buffer = try common.loadInput("inputs/day1.txt", allocator);
 
     const list_size = 1000;
     var left_list = try std.ArrayList(i32).initCapacity(allocator, list_size);
@@ -41,22 +42,6 @@ fn solvePartTwo(left_list: std.ArrayList(i32), right_list: std.ArrayList(i32)) !
     }
 
     std.debug.print("Part 2 result: {d}\n", .{result});
-}
-
-fn loadInput(allocator: std.mem.Allocator) ![]const u8 {
-    const input = "inputs/day1.txt";
-    var buff: [std.fs.max_path_bytes]u8 = undefined;
-    const input_path = try std.fs.realpath(input, &buff);
-
-    const input_file = try std.fs.openFileAbsolute(input_path, .{ .mode = .read_only });
-    defer input_file.close();
-    const input_info = try input_file.stat();
-    const input_size = input_info.size;
-
-    const input_buffer = try allocator.alloc(u8, input_size);
-    _ = try input_file.readAll(input_buffer);
-
-    return input_buffer;
 }
 
 fn parseInput(input_buffer: []const u8, left_list: *std.ArrayList(i32), right_list: *std.ArrayList(i32)) !void {
