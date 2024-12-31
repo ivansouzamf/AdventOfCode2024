@@ -2,6 +2,7 @@ const std = @import("std");
 
 const day1 = @import("day1.zig");
 const day2 = @import("day2.zig");
+const day3 = @import("day3.zig");
 
 pub fn main() !void {
     std.debug.print("Advent Of Code 2024 in Zig\n", .{});
@@ -23,6 +24,9 @@ pub fn main() !void {
         } else if (cmpArgs(arg, "day2")) {
             std.debug.print("Solving day 2\n", .{});
             try day2.solve(arena_allocator);
+        } else if (cmpArgs(arg, "day3")) {
+            std.debug.print("Solving day 3\n", .{});
+            try day3.solve(arena_allocator);
         } else {
             std.debug.print("Invalid arguments\n", .{});
             return CmdError.InvalidArgs;
